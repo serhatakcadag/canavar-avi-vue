@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+   <div id="app">
+    <div class="container">
+        <div class="canlar">
+             <div class="sen">
+                 <h1>SEN</h1>
+                 <div class="bar">
+                     <div style="transition: width 500ms;" :style="{width: scan + '%'}" class="progress">%{{ scan }}</div>
+                 </div>
+             </div>
+             <div class="canavar">
+                 <h1>CANAVAR</h1>
+                 <div class="bar">
+                     <div style="transition: width 500ms;" :style="{width: mcan + '%'}" class="progress">%{{ mcan }}</div>
+                 </div>
+             </div>
+        </div>
+        
+        <div class="btns">
+           <li style="list-style: none;">
+             <button @click="attack" style="background-color: rgba(255, 0, 0, 0.266);" class="btn">Saldırı</button>
+             <button @click="special" style="background-color:rgba(255, 166, 0, 0.47);" class="btn">Özel Saldırı</button>
+             <button @click="heal" style="background-color: rgba(0, 128, 0, 0.492);" class="btn">İlk Yardım</button>
+             <button @click="pesEt" style="background-color: rgba(0, 0, 255, 0.409);" class="btn">Pes et!</button>
+           </li>
+        </div>
+ 
+        <div v-if="logs.length != 0" class="score">
+            <div style="width: 80%; margin-top: 10px;" v-for="log in logs">
+                <p class="you">{{ log.yours }}</p>
+                <p class="monster">{{ log.monsters }}</p>
+                <hr>
+            </div>
+        </div>
+    </div>
+   </div>
+</body>
+
+<script>
+    const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      scan: 100,
+      mcan: 100,
+      logs: [],
+      isSpecial: 0,
+      isHeal: 0,
+    }
+  },
+  methods:{
+     attack()
+     {
+        if(this.isHeal != 3)
+        {
+           this.isHeal++;
+        }
+        if(this.isSpecial != 3)
+        {
+           this.isSpecial++;
+        }
+        let yours = Math.floor(Math.random() * 12) + 1;
+        let monsters = this.canavarhit();
+
+        let result = {
+            monsters: `CANAVAR CANINI AZALTTI (${monsters})`,
+            yours: `CANAVARIN CANINI AZALTTIN (${yours})`
+        }
+
+        this.logs.push(result);
+
+        this.scan -= monsters;
+        this.mcan -= yours;
+        this.bittiMi();
+     },
+     special(){
+        if(this.isSpecial == 3)
+        {
+           
+            let monsters = this.canavarhit();
+            yours = Math.floor(Math.random() * 18) + 5;
+
+            let result = {
+                monsters: `CANAVAR CANINI AZALTTI (${monsters})`,
+                yours: `CANAVARIN CANINI AZALTTIN (${yours})`
+            }
+            this.logs.push(result);
+            this.isSpecial = 0;
+
+            this.scan -= monsters;
+            this.mcan -= yours;
+            this.bittiMi();
+        }
+        else{
+            alert("Özel saldırı henüz hazır değil!");
+        }
+     },
+     heal(){
+        if (this.isHeal == 3) {
+            heal = (Math.floor(Math.random() * 10) + 5);
+            let monsters = this.canavarhit();
+            this.scan += heal;
+            this.scan -= monsters;
+            if (this.scan > 100) {
+                this.scan = 100;
+            }
+            let result = {
+            monsters: `CANAVAR CANINI AZALTTI (${monsters})`,
+            yours: `İLK YARDIM KULLANILDI (${heal})`
+            }   
+            this.logs.push(result);
+            this.isHeal = 0;
+        } else {
+            alert("İlk yardım henüz hazır değil!");
+        }
+     },
+     canavarhit(){
+        isCrit = Math.floor(Math.random() * 10) + 1;
+        if(isCrit == 5)
+        {
+        monsters = 12;
+        }
+        else{
+        monsters = 7;
+        }
+        return monsters;
+     },
+     bittiMi(){
+        if (this.scan <= 0) {
+            this.scan = 0;
+            alert("Oyun bitti. Canavar kazandı.");
+            if (confirm("Tekrar oynamak ister misin?")) {
+                this.pesEt();
+            }
+        }
+        else if(this.mcan <= 0){
+            alert("Oyun bitti. Kazandın!");
+            this.mcan = 0;
+            if (confirm("Tekrar oynamak ister misin?")) {
+                this.pesEt();
+            }
+        }
+     },
+     pesEt()
+     {
+        this.scan= 100;
+        this.mcan= 100;
+        this.logs = [];
+        this.isSpecial= 0;
+        this.isHeal= 0;
+     }
+  },
+}).mount('#app')
+</script>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        {{ title }}
+        <hello></hello>
+    </div>
+
+    <div id="app2">
+          {{ title }}
+          {{ deneme }}
+         <button @click="change">Değiş</button>
+    </div>
+</body>
+
+<script>
+     const {createApp} = Vue;
+
+    var vm1 = createApp({
+        data(){
+            return{
+                title:"Deneme1"
+            }
+        },
+        watch:{
+            title()
+            {
+                alert("2.instance çalıştı.");
+            }
+        }
+     }).mount("#app");
+
+    var vm2 = createApp({
+        data(){
+            return{
+                title:"Deneme2",
+                deneme:"Hello"
+            }
+        },
+        methods:{
+            change()
+            {
+                vm1.title = "Değişti";
+            }
+        }
+     }).mount("#app2");
+</script>
+
+</html>
